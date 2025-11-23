@@ -14,6 +14,8 @@ export default function Dashboard() {
         status: 'pending'
     });
 
+    const [statusFilter, setStatusFilter] = useState('All');
+
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -21,15 +23,26 @@ export default function Dashboard() {
         navigate('/login');
     };
 
+    // --- AUTH ERROR HELPER ---
+    const checkAuthError = (err) => {
+        if (err.response && err.response.status === 401) {
+            handleLogout();
+            return true; // Indicates a logout occurred
+        }
+        return false; // No auth error
+    };
+    // -------------------------
+
     const fetchTasks = async () => {
         try {
             const res = await api.get('/tasks');
             setTasks(res.data);
             setLoading(false);
         } catch (err) {
+            if (checkAuthError(err)) return;
+            
             setError('Failed to fetch tasks.');
             setLoading(false);
-            if (err.response?.status === 401) handleLogout();
         }
     };
 
@@ -55,6 +68,8 @@ export default function Dashboard() {
             setNewTaskData({ title: '', status: 'pending' });
             setError('');
         } catch (err) {
+            if (checkAuthError(err)) return; // Check for 401 and log out if necessary
+            
             console.error('Task creation error:', err);
             setError('Failed to create task.');
         }
@@ -90,6 +105,8 @@ export default function Dashboard() {
             setEditData({ title: '', status: '' });
             setError('');
         } catch (err) {
+            if (checkAuthError(err)) return; // Check for 401 and log out if necessary
+            
             console.error('Task update error:', err);
             setError('Failed to update task.');
         }
@@ -103,6 +120,8 @@ export default function Dashboard() {
             setTasks(tasks.filter(task => task._id !== taskId));
             setError('');
         } catch (err) {
+            if (checkAuthError(err)) return; // Check for 401 and log out if necessary
+            
             console.error('Task deletion error:', err);
             setError('Failed to delete task.');
         }
@@ -119,6 +138,15 @@ export default function Dashboard() {
             default: return '#6c757d';
         }
     };
+
+    // --- FILTERING LOGIC ---
+    const filteredTasks = tasks.filter(task => {
+        if (statusFilter === 'All') {
+            return true;
+        }
+        return task.status === statusFilter.toLowerCase();
+    });
+    // -----------------------
 
     if (loading) {
         return (
@@ -212,6 +240,64 @@ export default function Dashboard() {
                         ⚠️ {error}
                     </div>
                 )}
+
+                {/* Filter UI */}
+                <div style={{
+                    backgroundColor: '#fff',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    marginBottom: '20px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '15px',
+                    flexWrap: 'wrap',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                }}>
+                    <label 
+                        htmlFor="statusFilter" 
+                        style={{ 
+                            fontWeight: '600',
+                            fontSize: '15px',
+                            color: '#333',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        🔍 Filter By Status:
+                    </label>
+                    <select
+                        id="statusFilter"
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        style={{
+                            padding: '10px 16px',
+                            border: '2px solid #e0e0e0',
+                            borderRadius: '8px',
+                            fontSize: '15px',
+                            color: '#333',
+                            backgroundColor: '#fff',
+                            cursor: 'pointer',
+                            outline: 'none',
+                            minWidth: '180px',
+                            transition: 'border-color 0.3s ease'
+                        }}
+                        onFocus={(e) => e.target.style.borderColor = '#007bff'}
+                        onBlur={(e) => e.target.style.borderColor = '#e0e0e0'}
+                    >
+                        <option value="All">All Tasks</option>
+                        <option value="Pending">Pending</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                    </select>
+                    <span style={{
+                        marginLeft: 'auto',
+                        color: '#666',
+                        fontSize: '14px'
+                    }}>
+                        Showing {filteredTasks.length} of {tasks.length} tasks
+                    </span>
+                </div>
 
                 {/* Create Task Card */}
                 <div style={{
@@ -341,10 +427,10 @@ export default function Dashboard() {
                             color: '#666', 
                             fontSize: 'clamp(16px, 2.5vw, 18px)',
                             fontWeight: '400'
-                        }}>({tasks.length})</span>
+                        }}>({filteredTasks.length})</span>
                     </h2>
 
-                    {tasks.length === 0 ? (
+                    {filteredTasks.length === 0 ? (
                         <div style={{
                             backgroundColor: '#fff',
                             borderRadius: '12px',
@@ -359,7 +445,10 @@ export default function Dashboard() {
                                 fontSize: 'clamp(16px, 2.5vw, 18px)',
                                 margin: 0
                             }}>
-                                No tasks yet. Create your first task above! 🚀
+                                {statusFilter === 'All' 
+                                    ? 'No tasks yet. Create your first task above! 🚀'
+                                    : `No tasks found with status "${statusFilter}". Try a different filter! 🔍`
+                                }
                             </p>
                         </div>
                     ) : (
@@ -369,7 +458,7 @@ export default function Dashboard() {
                             gap: '16px',
                             width: '100%'
                         }}>
-                            {tasks.map(task => (
+                            {filteredTasks.map(task => (
                                 <div
                                     key={task._id}
                                     style={{
