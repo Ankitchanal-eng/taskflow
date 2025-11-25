@@ -17,10 +17,10 @@ const PORT = process.env.PORT || 3001;
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
 
-// 2. CORS: Updated with correct Vercel URL
+// 2. CORS: Updated with CORRECT NEW Vercel URL
 app.use(cors({
     origin: [
-        "https://taskflow-f479v2p9u-ankit-chanals-projects.vercel.app",  // ✅ UPDATED
+        "https://taskflow-3w3lmrozz-ankit-chanals-projects.vercel.app",  // ✅ NEW URL
         "http://localhost:5173"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
