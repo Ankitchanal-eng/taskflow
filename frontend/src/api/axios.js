@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Your Render backend URL
-const LIVE_API_URL = 'https://taskflow-m3nm.onrender.com';
+const LIVE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
 // Create axios instance
 const api = axios.create({
