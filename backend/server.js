@@ -19,11 +19,13 @@ app.use(express.urlencoded({ extended: true })); // Added for robustness
 
 // 2. CORS: Must be fully configured and applied before secure routes.
 app.use(cors({
-    origin: 'https://taskflow-app-roan.vercel.app/', // Must match your Vite frontend URL exactly
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    origin: [
+        "https://taskflow-app-roan.vercel.app",
+        "http://localhost:5173"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
-    // CRITICAL: Explicitly expose/allow headers, especially 'Authorization'
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'], 
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 }));
 
 // --- ROUTES ---
