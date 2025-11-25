@@ -1,11 +1,13 @@
 import axios from 'axios';
 
-// Backend URL from Vite environment or fallback to local server
-const LIVE_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Backend URL from Vite environment or fallback to production server
+const LIVE_API_URL = import.meta.env.VITE_API_URL || 'https://taskflow-m3nm.onrender.com';
+
+console.log('🔗 Connected to API:', LIVE_API_URL); // Debug log
 
 // Create axios instance
 const api = axios.create({
-    baseURL: LIVE_API_URL,  // Correct
+    baseURL: LIVE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     }
