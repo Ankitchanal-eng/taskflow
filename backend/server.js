@@ -15,12 +15,12 @@ const PORT = process.env.PORT || 3001;
 
 // 1. Body Parser: Must come first to populate req.body
 app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); // Added for robustness
+app.use(express.urlencoded({ extended: true }));
 
-// 2. CORS: Must be fully configured and applied before secure routes.
+// 2. CORS: Updated with correct Vercel URL
 app.use(cors({
     origin: [
-        "https://taskflow-app-roan.vercel.app",
+        "https://taskflow-f479v2p9u-ankit-chanals-projects.vercel.app",  // ✅ UPDATED
         "http://localhost:5173"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -30,11 +30,11 @@ app.use(cors({
 
 // --- ROUTES ---
 
-// Task Routes (These require the Authorization header checked by CORS)
-app.use('/api/tasks', taskRoutes);
-
 // Authentication routes
 app.use("/api/auth", authRoutes);
+
+// Task Routes (These require the Authorization header checked by CORS)
+app.use('/api/tasks', taskRoutes);
 
 // --- DATABASE CONNECTION & SERVER STARTUP ---
 
