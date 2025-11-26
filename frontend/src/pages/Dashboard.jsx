@@ -16,7 +16,7 @@ export default function Dashboard() {
 
   const [statusFilter, setStatusFilter] = useState('All');
 
-  // 🔑 Track auth based on token in localStorage
+  // 🔑 Auth state from token
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!localStorage.getItem('token')
   );
@@ -25,7 +25,8 @@ export default function Dashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsAuthenticated(false);      // 👈 update state
+    setIsAuthenticated(false);      // user is now logged out
+    setTasks([]);                   // optional: clear tasks
     navigate('/login');
   };
 
@@ -33,9 +34,9 @@ export default function Dashboard() {
   const checkAuthError = (err) => {
     if (err.response && err.response.status === 401) {
       handleLogout();
-      return true; // Indicates a logout occurred
+      return true;
     }
-    return false; // No auth error
+    return false;
   };
   // -------------------------
 
@@ -46,16 +47,21 @@ export default function Dashboard() {
       setLoading(false);
     } catch (err) {
       if (checkAuthError(err)) return;
-
       setError('Failed to fetch tasks.');
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // When component mounts, re-check token (in case user just logged in)
-    setIsAuthenticated(!!localStorage.getItem('token'));
-    fetchTasks();
+    // When Dashboard mounts or when token changes, refresh auth state
+    const hasToken = !!localStorage.getItem('token');
+    setIsAuthenticated(hasToken);
+    if (hasToken) {
+      fetchTasks();
+    } else {
+      setLoading(false);
+      setTasks([]);
+    }
   }, []);
 
   const onNewTaskChange = (e) => {
@@ -215,7 +221,7 @@ export default function Dashboard() {
             📋 Task Dashboard
           </h1>
 
-          {/* 👇 Auth-aware buttons */}
+          {/* Auth-aware buttons */}
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             {!isAuthenticated && (
               <>
@@ -292,6 +298,59 @@ export default function Dashboard() {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div
+        style={{
+          width: '100%',
+          padding: '0 5%',
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* Error Message */}
+        {error && (
+          <div
+            style={{
+              backgroundColor: '#f8d7da',
+              color: '#721c24',
+              padding: '12px 20px',
+              borderRadius: '8px',
+              marginBottom: '20px',
+              border: '1px solid #f5c6cb',
+              width: '100%',
+              boxSizing: 'border-box',
+            }}
+          >
+            ⚠️ {error}
+          </div>
+        )}
+
+        {/* If not authenticated, show a simple message instead of task UI */}
+        {!isAuthenticated ? (
+          <div
+            style={{
+              backgroundColor: '#fff',
+              borderRadius: '12px',
+              padding: '40px 30px',
+              textAlign: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+              width: '100%',
+              boxSizing: 'border-box',
+            }}
+          >
+            <h2 style={{ marginBottom: '10px', color: '#333' }}>
+              Welcome to TaskFlow
+            </h2>
+            <p style={{ color: '#666' }}>
+              Please register or log in using the buttons above to manage your
+              tasks.
+            </p>
+          </div>
+        ) : (
+          <>
+          </>
+        )}
       </div>
     </div>
   );
