@@ -27,15 +27,14 @@ export default function Dashboard() {
     const checkAuthError = (err) => {
         if (err.response && err.response.status === 401) {
             handleLogout();
-            return true; // Indicates a logout occurred
+            return true;
         }
-        return false; // No auth error
+        return false;
     };
-    // -------------------------
 
     const fetchTasks = async () => {
         try {
-            const res = await api.get('/tasks');
+            const res = await api.get('/api/tasks'); // ✅ FIXED
             setTasks(res.data);
             setLoading(false);
         } catch (err) {
@@ -59,7 +58,7 @@ export default function Dashboard() {
         if (!newTaskData.title.trim()) return;
 
         try {
-            const res = await api.post('/tasks', {
+            const res = await api.post('/api/tasks', { // ✅ FIXED
                 title: newTaskData.title,
                 status: newTaskData.status
             });
@@ -68,7 +67,7 @@ export default function Dashboard() {
             setNewTaskData({ title: '', status: 'pending' });
             setError('');
         } catch (err) {
-            if (checkAuthError(err)) return; // Check for 401 and log out if necessary
+            if (checkAuthError(err)) return;
             
             console.error('Task creation error:', err);
             setError('Failed to create task.');
@@ -92,7 +91,7 @@ export default function Dashboard() {
         }
 
         try {
-            const res = await api.put(`/tasks/${taskId}`, {
+            const res = await api.put(`/api/tasks/${taskId}`, { // ✅ FIXED
                 title: editData.title,
                 status: editData.status
             });
@@ -105,7 +104,7 @@ export default function Dashboard() {
             setEditData({ title: '', status: '' });
             setError('');
         } catch (err) {
-            if (checkAuthError(err)) return; // Check for 401 and log out if necessary
+            if (checkAuthError(err)) return;
             
             console.error('Task update error:', err);
             setError('Failed to update task.');
@@ -116,11 +115,11 @@ export default function Dashboard() {
         if (!window.confirm("Are you sure you want to delete this task?")) return;
 
         try {
-            await api.delete(`/tasks/${taskId}`);
+            await api.delete(`/api/tasks/${taskId}`); // ✅ FIXED
             setTasks(tasks.filter(task => task._id !== taskId));
             setError('');
         } catch (err) {
-            if (checkAuthError(err)) return; // Check for 401 and log out if necessary
+            if (checkAuthError(err)) return;
             
             console.error('Task deletion error:', err);
             setError('Failed to delete task.');
@@ -139,14 +138,12 @@ export default function Dashboard() {
         }
     };
 
-    // --- FILTERING LOGIC ---
     const filteredTasks = tasks.filter(task => {
         if (statusFilter === 'All') {
             return true;
         }
         return task.status === statusFilter.toLowerCase();
     });
-    // -----------------------
 
     if (loading) {
         return (
@@ -198,24 +195,63 @@ export default function Dashboard() {
                     }}>
                         📋 Task Dashboard
                     </h1>
-                    <button
-                        onClick={handleLogout}
-                        style={{
-                            padding: '10px 24px',
-                            backgroundColor: '#dc3545',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '14px',
-                            fontWeight: '500',
-                            transition: 'all 0.3s ease'
-                        }}
-                        onMouseOver={(e) => e.target.style.backgroundColor = '#c82333'}
-                        onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
-                    >
-                        Logout
-                    </button>
+                    {/* ✅ ADDED: Register & Login Buttons */}
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        <button
+                            onClick={() => navigate('/register')}
+                            style={{
+                                padding: '10px 24px',
+                                backgroundColor: '#28a745',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#218838'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#28a745'}
+                        >
+                            Register
+                        </button>
+                        <button
+                            onClick={() => navigate('/login')}
+                            style={{
+                                padding: '10px 24px',
+                                backgroundColor: '#007bff',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#0056b3'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#007bff'}
+                        >
+                            Login
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            style={{
+                                padding: '10px 24px',
+                                backgroundColor: '#dc3545',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                transition: 'all 0.3s ease'
+                            }}
+                            onMouseOver={(e) => e.target.style.backgroundColor = '#c82333'}
+                            onMouseOut={(e) => e.target.style.backgroundColor = '#dc3545'}
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -299,6 +335,7 @@ export default function Dashboard() {
                     </span>
                 </div>
 
+                {/* Rest of the component remains the same... */}
                 {/* Create Task Card */}
                 <div style={{
                     backgroundColor: '#fff',
