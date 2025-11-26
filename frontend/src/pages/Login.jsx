@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios'; // ✅ Import the configured api instance
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
@@ -16,22 +16,18 @@ export default function Login() {
 
     const onSubmit = async e => {
         e.preventDefault();
-        setError(''); // Clear previous errors
+        setError('');
         try {
-            // NOTE: The URL must match your backend server address!
-            const res = await axios.post('http://localhost:3001/api/auth/login', {
+            // ✅ FIXED: Use api instance instead of hardcoded localhost
+            const res = await api.post('/api/auth/login', {
                 email,
                 password
             });
 
-            // 1. Store the token in local storage (This is how we pass the PrivateRoute check!)
             localStorage.setItem('token', res.data.token);
-            
-            // 2. Redirect to the protected dashboard page
             navigate('/dashboard');
 
         } catch (err) {
-            // Display error message from the backend (e.g., "Invalid Credentials")
             const msg = err.response?.data?.message || 'Login failed';
             setError(msg);
         }
