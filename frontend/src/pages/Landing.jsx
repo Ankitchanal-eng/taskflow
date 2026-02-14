@@ -1,71 +1,95 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const hasToken = !!localStorage.getItem('token');
 
-  // If already logged in, go straight to dashboard
-  if (hasToken) {
-    navigate('/dashboard');
-  }
+  useEffect(() => {
+    const hasToken = !!localStorage.getItem("token");
+    if (hasToken) {
+      navigate("/dashboard");
+    }
+  }, [navigate]);
 
   return (
     <div
       style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#f8f9fa',
-        padding: '20px',
-        boxSizing: 'border-box',
+        width: "100%",
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f8f9fa",
+        padding: "20px",
+        boxSizing: "border-box",
       }}
     >
-      <h1 style={{ marginBottom: '10px', color: '#333' }}>Welcome to TaskFlow</h1>
-      <p style={{ marginBottom: '30px', color: '#666', textAlign: 'center' }}>
-        Manage your tasks securely. Please register or log in to continue.
-      </p>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "900px",
+          textAlign: "center",
+        }}
+      >
+        <h1 style={{ marginBottom: "10px", color: "#333", fontSize: "2.5rem" }}>
+          Welcome to TaskFlow
+        </h1>
 
-      <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center' }}>
-        <button
-          onClick={() => navigate('/register')}
+        <p
           style={{
-            padding: '10px 24px',
-            backgroundColor: '#28a745',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '500',
-            transition: 'all 0.3s ease',
+            marginBottom: "40px",
+            color: "#666",
+            fontSize: "1.1rem",
           }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = '#218838')}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#28a745')}
         >
-          Register
-        </button>
+          Manage your tasks securely. Please register or log in to continue.
+        </p>
 
-        <button
-          onClick={() => navigate('/login')}
+        <div
           style={{
-            padding: '10px 24px',
-            backgroundColor: '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '500',
-            transition: 'all 0.3s ease',
+            display: "flex",
+            gap: "20px",
+            flexWrap: "wrap",
+            justifyContent: "center",
           }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = '#0056b3')}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
         >
-          Login
-        </button>
+          <button
+            onClick={() => navigate("/register")}
+            style={{
+              padding: "12px 32px",
+              backgroundColor: "#28a745",
+              color: "white",
+              border: "none",
+              borderRadius: "10px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "600",
+              transition: "0.3s",
+              minWidth: "150px",
+            }}
+          >
+            Register
+          </button>
+
+          <button
+            onClick={() => navigate("/login")}
+            style={{
+              padding: "12px 32px",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "none",
+              borderRadius: "10px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "600",
+              transition: "0.3s",
+              minWidth: "150px",
+            }}
+          >
+            Login
+          </button>
+        </div>
       </div>
     </div>
   );
