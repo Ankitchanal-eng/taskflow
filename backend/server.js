@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 // 2. CORS: Updated with CORRECT NEW Vercel URL
 app.use(cors({
     origin: [
-        "https://taskflow-app-ten-ashy.vercel.app",  // ✅ NEW URL
+        "https://taaskflow-app.netlify.app",  // ✅ NEW URL
         "http://localhost:5173"
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
