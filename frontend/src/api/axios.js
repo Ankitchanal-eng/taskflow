@@ -1,7 +1,10 @@
 import axios from "axios";
 
-const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:3001";
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  throw new Error("VITE_API_URL is not defined");
+}
 
 console.log("🔗 Connected to API:", API_URL);
 
