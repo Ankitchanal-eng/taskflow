@@ -379,7 +379,7 @@ export default function Dashboard() {
                 onChange={(e) => setStatusFilter(e.target.value)}
                 style={{
                   padding: '10px 16px',
-                  border: '2px solid '#e0e0e0',
+                  border: '2px solid #e0e0e0',
                   borderRadius: '8px',
                   fontSize: '15px',
                   color: '#333',
